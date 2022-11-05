@@ -1,0 +1,32 @@
+/*
+ * global.h
+ *
+ *  Created on: Nov 4, 2022
+ *      Author: HP
+ */
+
+#ifndef INC_GLOBAL_H_
+#define INC_GLOBAL_H_
+
+#include"timer.h"
+
+#define INIT 1
+#define RESET 2
+#define INC 3
+#define DEC 4
+
+//#define MANUAL_INIT 10
+//#define MODE1 11
+//#define MODE2 12
+//#define MODE3 13
+//#define MODE4 14
+
+extern int status;
+//extern int mode;
+//extern int value;
+//
+//extern int green_time;
+//extern int red_time;
+//extern int yellow_time;
+
+#endif /* INC_GLOBAL_H_ */

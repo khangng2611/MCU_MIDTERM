@@ -1,0 +1,109 @@
+/*
+ * button.c
+ *
+ *  Created on: Nov 4, 2022
+ *      Author: HP
+ */
+
+
+#include"button.h"
+
+int TimeOutForKeyPress[NO_OF_BUTTONS] =  {DURATION_FOR_AUTO_INCREASING,DURATION_FOR_AUTO_INCREASING,DURATION_FOR_AUTO_INCREASING};
+int button_flag[NO_OF_BUTTONS] = {0,0,0};
+int button_flag_longpressed[NO_OF_BUTTONS] = {0,0,0};
+int button_flag_doublepressed[NO_OF_BUTTONS] = {-1,-1,-1};
+
+int KeyReg0[NO_OF_BUTTONS] = {NORMAL_STATE,NORMAL_STATE,NORMAL_STATE};
+int KeyReg1[NO_OF_BUTTONS] = {NORMAL_STATE,NORMAL_STATE,NORMAL_STATE};
+int KeyReg2[NO_OF_BUTTONS] = {NORMAL_STATE,NORMAL_STATE,NORMAL_STATE};
+int KeyReg3[NO_OF_BUTTONS] = {NORMAL_STATE,NORMAL_STATE,NORMAL_STATE};
+
+int isButtonPressed(int index) {
+	if (button_flag[index] == 1) {
+		button_flag[index] = 0;
+		return 1;
+	}
+	return 0;
+}
+
+int isButtonLongPressed(int index) {
+	if (button_flag_longpressed[index] == 1) {
+		return 1;
+	}
+	return 0;
+}
+
+int isButtonDoubleClickPressed(int index) {
+
+}
+
+void subKeyProcess(int index){
+	button_flag[index] = 1;
+}
+//nhieu nut nhan, dung mang, o ham HALGPIOReadPin dung them if de phan loai nut, sau do for cho full ham getKeyInput() (xem them tren Internet)
+void getKeyInput(){
+  for (int i = 0; i < NO_OF_BUTTONS; i++) {
+	  KeyReg2[i] = KeyReg1[i];
+	  KeyReg1[i] = KeyReg0[i];
+	  switch (i) {
+	  		case 0:
+	  			KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON1_GPIO_Port, BUTTON1_Pin) ;
+	  			break;
+	  		case 1:
+	  			KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON2_GPIO_Port, BUTTON2_Pin) ;
+	  			break;
+	  		case 2:
+	  			KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON3_GPIO_Port, BUTTON3_Pin) ;
+	  			break;
+	  }
+	  if ((KeyReg1[i] == KeyReg0[i]) && (KeyReg1[i] == KeyReg2[i])){
+	    if (KeyReg2[i] == NORMAL_STATE) {
+	    	button_flag_longpressed[i] = 0;
+	    }
+
+
+	    TimeOutForDoubleClick[i] --;
+	    if (KeyReg2[i] == PRESSED_STATE) {
+	    	if (TimeOutForDoubleClick[i] > 0) {
+	    		button_flag_doublepressed[i] = 1;
+
+	    	}
+	    	else TimeOutForDoubleClick[i] = DURATION_FOR_DOUBLE_CLICK;
+	    }
+
+
+	    if (KeyReg2[i] != KeyReg3[i]){
+	      KeyReg3[i] = KeyReg2[i];
+	      if (KeyReg2[i] == PRESSED_STATE){
+	        subKeyProcess(i);
+	        TimeOutForKeyPress[i] = DURATION_FOR_AUTO_INCREASING;
+	      }
+	    }
+	    else {
+	        TimeOutForKeyPress[i] --;
+	        if (TimeOutForKeyPress[i] == 0){
+	          KeyReg3[i] = NORMAL_STATE;
+	          button_flag_longpressed[i] = 1;
+	        }
+	    }
+	  }
+  }
+}
+
+//void areButtonsPressed() {
+//	if (isButtonPressed(0)) {
+//		mode = (mode >= 4) ? 1 : mode+1;
+//		value = 1;
+//		display7SEGM(mode);
+//		display7SEG(1);
+//		display7SEG1(0);
+//	}
+//	if (isButtonPressed(1)) {
+//		value = (value >= 99) ? 1 : value+1;
+//		display7SEG(value%10);
+//		display7SEG1(value/10);
+//	}
+//	if (isButtonPressed(2)) {
+//		status = MANUAL_INIT;
+//	}
+//}

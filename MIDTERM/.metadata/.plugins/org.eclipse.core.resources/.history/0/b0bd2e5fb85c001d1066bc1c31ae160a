@@ -1,0 +1,23 @@
+/*
+ * global.h
+ *
+ *  Created on: Nov 4, 2022
+ *      Author: HP
+ */
+
+#ifndef INC_GLOBAL_H_
+#define INC_GLOBAL_H_
+
+#include"timer.h"
+
+#define INIT 1
+#define RESET 2
+#define INC 3
+#define DEC 4
+#define AUTO 5
+
+extern int status;
+extern int count;
+
+
+#endif /* INC_GLOBAL_H_ */
